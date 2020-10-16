@@ -1,0 +1,10 @@
+[Unit]
+BindsTo=minecraft@%i.service
+
+[Socket]
+ListenFIFO=/srv/minecraft/%i/systemd.stdin
+Service=minecraft@%i.service
+SocketUser=minecraft
+SocketGroup=minecraft
+RemoveOnStop=true
+SocketMode=0600

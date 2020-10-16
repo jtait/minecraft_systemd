@@ -1,0 +1,42 @@
+[Unit]
+Description=Minecraft Server - %i
+After=network.target
+ConditionPathExists=/srv/minecraft/%i
+
+[Service]
+WorkingDirectory=/srv/minecraft/%i
+
+User=minecraft
+Group=minecraft
+
+Sockets=minecraft@%i.socket
+StandardInput=socket
+StandardOutput=journal
+StandardError=journal
+
+PrivateUsers=true
+ProtectSystem=full
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+NoNewPrivileges=true
+
+# Set default variables
+Environment="MIN_MEM=512M"
+Environment="MAX_MEM=1024M"
+Environment="JAR_PATH=/srv/minecraft/%i/minecraft.jar"
+
+# Override default variable values in environment file
+EnvironmentFile=-/srv/minecraft/%i/systemd.conf
+
+ExecStart=/usr/bin/java -server -Xms${MIN_MEM} -Xmx${MAX_MEM} -XX:+UseG1GC -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -jar ${JAR_PATH} nogui
+ExecStop=/bin/sh -c "/bin/echo stop > /srv/minecraft/%i/systemd.stdin"
+Restart=on-failure
+RestartSec=60s
+
+# this is necessary to keep systemd from killing the process before it exits after ExecStop is called
+KillSignal=SIGCONT
+
+[Install]
+WantedBy=multi-user.target
