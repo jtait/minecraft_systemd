@@ -25,12 +25,13 @@ NoNewPrivileges=true
 # Set default variables
 Environment="MIN_MEM=1024M"
 Environment="MAX_MEM=1024M"
-Environment="JAR_PATH=/srv/minecraft/%i/minecraft.jar"
+Environment="JAVA_PARAMETERS=-XX:+UseG1GC -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10"
+Environment="JAR_PATH=minecraft.jar"
 
 # Override default variable values in environment file
 EnvironmentFile=-/srv/minecraft/%i/systemd.conf
 
-ExecStart=/usr/bin/java -server -Xms${MIN_MEM} -Xmx${MAX_MEM} -XX:+UseG1GC -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -jar ${JAR_PATH} nogui
+ExecStart=/bin/sh -c "/usr/bin/java -server -Xms${MIN_MEM} -Xmx${MAX_MEM} ${JAVA_PARAMETERS} -jar ${JAR_PATH} nogui"
 ExecStop=/bin/sh -c "/bin/echo stop > /srv/minecraft/%i/systemd.stdin"
 Restart=on-failure
 RestartSec=60s
