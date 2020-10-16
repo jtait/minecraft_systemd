@@ -23,7 +23,7 @@ ProtectControlGroups=true
 NoNewPrivileges=true
 
 # Set default variables
-Environment="MIN_MEM=512M"
+Environment="MIN_MEM=1024M"
 Environment="MAX_MEM=1024M"
 Environment="JAR_PATH=/srv/minecraft/%i/minecraft.jar"
 

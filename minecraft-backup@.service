@@ -1,0 +1,49 @@
+[Unit]
+Description=Minecraft Server Backup Task - %i
+After=network.target
+ConditionDirectoryNotEmpty=/srv/minecraft/%i
+PartOf=minecraft@%i.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/minecraft/%i
+
+User=minecraft
+Group=minecraft
+
+Sockets=minecraft@%i.socket
+StandardOutput=journal
+StandardError=journal
+
+PrivateUsers=true
+ProtectSystem=full
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+NoNewPrivileges=true
+
+# Set default variables
+Environment="BACKUP_PATH=/srv/minecraft/%i/backups"
+
+# Override default variable values in environment file
+EnvironmentFile=-/srv/minecraft/%i/systemd.conf
+
+# create the backup folder
+ExecStartPre=/bin/sh -c '/bin/mkdir -p "${BACKUP_PATH}"'
+
+# stop world saving
+ExecStartPre=/bin/sh -c "/bin/echo save-off > /srv/minecraft/%i/systemd.stdin"
+ExecStartPre=/bin/sh -c "/bin/echo save-all > /srv/minecraft/%i/systemd.stdin"
+ExecStartPre=/bin/sh -c "/bin/echo 'say backup starting' > /srv/minecraft/%i/systemd.stdin"
+
+# run the backup
+ExecStart=/bin/sh -c '/bin/tar --exclude="${BACKUP_PATH}" -cjf ${BACKUP_PATH}/%i-"$(/bin/date +%%y-%%m-%%d-%%H.%%M)".tar.bz2 $(/bin/pwd)'
+
+# turn world saving back on
+ExecStopPost=/bin/sh -c "/bin/echo save-on > /srv/minecraft/%i/systemd.stdin"
+ExecStopPost=/bin/sh -c "/bin/echo save-all > /srv/minecraft/%i/systemd.stdin"
+ExecStopPost=/bin/sh -c "/bin/echo 'say backup complete' > /srv/minecraft/%i/systemd.stdin"
+
+[Install]
+WantedBy=multi-user.target
