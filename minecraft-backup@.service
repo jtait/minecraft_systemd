@@ -33,17 +33,17 @@ EnvironmentFile=-/srv/minecraft/%i/systemd.conf
 ExecStartPre=/bin/sh -c '/bin/mkdir -p "${BACKUP_PATH}"'
 
 # stop world saving
-ExecStartPre=/bin/sh -c "/bin/echo save-off > /srv/minecraft/%i/systemd.stdin"
-ExecStartPre=/bin/sh -c "/bin/echo save-all > /srv/minecraft/%i/systemd.stdin"
-ExecStartPre=/bin/sh -c "/bin/echo 'say backup starting' > /srv/minecraft/%i/systemd.stdin"
+ExecStartPre=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo save-off > /srv/minecraft/%i/systemd.stdin; fi"
+ExecStartPre=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo save-all > /srv/minecraft/%i/systemd.stdin; fi"
+ExecStartPre=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo 'say backup starting' > /srv/minecraft/%i/systemd.stdin; fi"
 
 # run the backup
 ExecStart=/bin/sh -c '/bin/tar --exclude="${BACKUP_PATH}" -cjf ${BACKUP_PATH}/%i-"$(/bin/date +%%y-%%m-%%d-%%H.%%M)".tar.bz2 $(/bin/pwd)'
 
 # turn world saving back on
-ExecStopPost=/bin/sh -c "/bin/echo save-on > /srv/minecraft/%i/systemd.stdin"
-ExecStopPost=/bin/sh -c "/bin/echo save-all > /srv/minecraft/%i/systemd.stdin"
-ExecStopPost=/bin/sh -c "/bin/echo 'say backup complete' > /srv/minecraft/%i/systemd.stdin"
+ExecStopPost=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo save-on > /srv/minecraft/%i/systemd.stdin; fi"
+ExecStopPost=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo save-all > /srv/minecraft/%i/systemd.stdin; fi"
+ExecStopPost=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo 'say backup complete' > /srv/minecraft/%i/systemd.stdin; fi"
 
 [Install]
 WantedBy=multi-user.target
