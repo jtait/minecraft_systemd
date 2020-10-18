@@ -11,7 +11,6 @@ WorkingDirectory=/srv/minecraft/%i
 User=minecraft
 Group=minecraft
 
-Sockets=minecraft@%i.socket
 StandardOutput=journal
 StandardError=journal
 
