@@ -14,7 +14,7 @@ The service expects certain conventions:
 
 ### Installation
 1. Copy the .service and .socket files into /etc/systemd/system.
-1. Execute ```sudo systemdtl daemon-reload```
+1. Execute ```sudo systemctl daemon-reload```
 1. If you want to provide access to a group of people that don't have elevated privileges on your system, copy ```minecraft.sudoers``` into ```/etc/sudoers.d```.
 
 ### Basic Usage Example - Vanilla Minecraft Server
