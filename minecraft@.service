@@ -25,13 +25,17 @@ NoNewPrivileges=true
 # Set default variables
 Environment="MIN_MEM=1024M"
 Environment="MAX_MEM=1024M"
-Environment="JAVA_PARAMETERS=-XX:+UseG1GC -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10"
+Environment="JAVA_PARAMETERS=-XX:+UseG1GC -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10"
 Environment="JAR_PATH=minecraft.jar"
+Environment="SHUTDOWN_DELAY=30"
 
 # Override default variable values in environment file
 EnvironmentFile=-/srv/minecraft/%i/systemd.conf
 
 ExecStart=/bin/sh -c "/usr/bin/java -server -Xms${MIN_MEM} -Xmx${MAX_MEM} ${JAVA_PARAMETERS} -jar ${JAR_PATH} nogui"
+ExecStop=/bin/sh -c "/bin/echo say SERVER SHUTTING DOWN in ${SHUTDOWN_DELAY} secs... > /srv/minecraft/%i/systemd.stdin"
+ExecStop=/bin/sh -c '/bin/sleep ${SHUTDOWN_DELAY}'
+ExecStop=/bin/sh -c "/bin/echo say SERVER SHUTTING DOWN NOw > /srv/minecraft/%i/systemd.stdin"
 ExecStop=/bin/sh -c "/bin/echo stop > /srv/minecraft/%i/systemd.stdin"
 Restart=on-failure
 RestartSec=60s
