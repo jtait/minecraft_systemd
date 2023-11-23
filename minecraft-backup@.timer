@@ -1,0 +1,10 @@
+[Unit]
+Description=Schedues the minecraft-backup service
+Requires=minecraft-backup@%i.service
+
+[Timer]
+Unit=minecraft-backup@%i.service
+OnCalendar=*-*-* 02:17:00
+
+[Install]
+WantedBy=timers.target
