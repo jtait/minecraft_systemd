@@ -13,9 +13,21 @@ The service expects certain conventions:
 1. The service is run as the user "minecraft".  This user needs read/write permissions on the ```/srv/minecraft/<instance_name>``` directory.  All the server files should be kept inside this directory. The "minecraft" user should be a restricted user, and does not require a shell or home directory.
 
 ### Installation
-1. Copy the .service and .socket files into /etc/systemd/system.
+1. Copy the .service, .timer and .socket files into /etc/systemd/system.
 1. Execute ```sudo systemctl daemon-reload```
-1. If you want to provide access to a group of people that don't have elevated privileges on your system, copy ```minecraft.sudoers``` into ```/etc/sudoers.d```.
+1. If you want to provide access to a group of users that don't have elevated privileges on your system, copy ```minecraft.sudoers``` into ```/etc/sudoers.d``` and add these users to group minecraft.
+
+### Enable and start the server and backup
+1. Enable and start minecraft@vanilla.service to let systemd manage the minecraft server service.
+```
+systemctl enable minecraft@vanilla.service
+systemctl start minecraft@vanilla.service
+```
+2. Enable and start minecraft-backup@vanilla.timer to schedule the daily backups.
+```
+systemctl enable minecraft-backup@vanilla.timer
+systemctl start minecraft-backup@vanilla.timer
+```
 
 ### Basic Usage Example - Vanilla Minecraft Server
 1. Create a folder in ```/srv/minecraft``` named 'vanilla', and ensure it is owned by minecraft:minecraft.
@@ -40,6 +52,9 @@ It may be tempting to try and write scripts to and write to the socket as the mi
 
 ### Logging
 The service logs to journald for stdout and stderr.
+1. display server log `journalctl -fu minecraft@vanilla.service`
+2. display backup log `journalctl -u minecraft-backup@survival.service`
+3. backup timer status `systemctl status minecraft-backup@survival.timer`
 
 ### Extra notes, not covered by these files
 1. You should run a firewall on your server. You need to add a rule to allow the server port access.  The port is configured in server.properties in the root of the server files (e.g. ```/srv/minecraft/vanilla/server.properties```).  I use [ufw](https://launchpad.net/ufw) on Debian 10.  It's simple to configure and use.  If your system uses a different program that would work too.
