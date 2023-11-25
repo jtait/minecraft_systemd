@@ -7,4 +7,4 @@ Service=minecraft@%i.service
 SocketUser=minecraft
 SocketGroup=minecraft
 RemoveOnStop=true
-SocketMode=0600
+SocketMode=0660
