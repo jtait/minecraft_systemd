@@ -15,7 +15,7 @@ The service expects certain conventions:
 ### Installation
 1. Copy the .service, .timer and .socket files into /etc/systemd/system.
 1. Execute ```sudo systemctl daemon-reload```
-1. If you want to provide access to a group of users that don't have elevated privileges on your system, copy ```minecraft.sudoers``` into ```/etc/sudoers.d``` and add these users to group minecraft.
+1. If you want to provide access to a group of users that don't have elevated privileges on your system, copy ```minecraft_sudoers``` into ```/etc/sudoers.d``` and add these users to group minecraft.
 
 ### Enable and start the server and backup
 1. Enable and start minecraft@vanilla.service to let systemd manage the minecraft server service.
