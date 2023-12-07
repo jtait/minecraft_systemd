@@ -33,10 +33,10 @@ Environment="SHUTDOWN_DELAY=30"
 EnvironmentFile=-/srv/minecraft/%i/systemd.conf
 
 ExecStart=/bin/sh -c "/usr/bin/java -server -Xms${MIN_MEM} -Xmx${MAX_MEM} ${JAVA_PARAMETERS} -jar ${JAR_PATH} nogui"
-ExecStop=/bin/sh -c "/bin/echo say SERVER SHUTTING DOWN in ${SHUTDOWN_DELAY} secs... > /srv/minecraft/%i/systemd.stdin"
+ExecStop=/bin/sh -c "/bin/echo say SERVER SHUTTING DOWN in ${SHUTDOWN_DELAY} secs... > /run/minecraft/%i.stdin"
 ExecStop=/bin/sh -c '/bin/sleep ${SHUTDOWN_DELAY}'
-ExecStop=/bin/sh -c "/bin/echo say SERVER SHUTTING DOWN NOw > /srv/minecraft/%i/systemd.stdin"
-ExecStop=/bin/sh -c "/bin/echo stop > /srv/minecraft/%i/systemd.stdin"
+ExecStop=/bin/sh -c "/bin/echo say SERVER SHUTTING DOWN NOw > /run/minecraft/%i.stdin"
+ExecStop=/bin/sh -c "/bin/echo stop > /run/minecraft/%i.stdin"
 Restart=on-failure
 RestartSec=60s
 
