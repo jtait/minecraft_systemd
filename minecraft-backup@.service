@@ -24,6 +24,7 @@ NoNewPrivileges=true
 
 # Set default variables
 Environment="BACKUP_PATH=/srv/minecraft/%i/backups"
+Environment="BACKUP_RETENTION_DAYS=7"
 
 # Override default variable values in environment file
 EnvironmentFile=-/srv/minecraft/%i/systemd.conf
@@ -32,17 +33,15 @@ EnvironmentFile=-/srv/minecraft/%i/systemd.conf
 ExecStartPre=/bin/sh -c '/bin/mkdir -p "${BACKUP_PATH}"'
 
 # stop world saving
-ExecStartPre=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo save-off > /srv/minecraft/%i/systemd.stdin; fi"
-ExecStartPre=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo save-all > /srv/minecraft/%i/systemd.stdin; fi"
-ExecStartPre=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo 'say backup starting' > /srv/minecraft/%i/systemd.stdin; fi"
+ExecStartPre=/bin/sh -c "if [ -p /run/minecraft/%i.stdin ]; then /bin/echo save-off > /run/minecraft/%i.stdin; fi"
+ExecStartPre=/bin/sh -c "if [ -p /run/minecraft/%i.stdin ]; then /bin/echo save-all > /run/minecraft/%i.stdin; fi"
+ExecStartPre=/bin/sh -c "if [ -p /run/minecraft/%i.stdin ]; then /bin/echo 'say backup starting' > /run/minecraft/%i.stdin; fi"
+ExecStartPre=/bin/sh -c "/usr/bin/find ${BACKUP_PATH} -mtime +${BACKUP_RETENTION_DAYS} -type f -delete"
 
 # run the backup
 ExecStart=/bin/sh -c '/bin/tar --exclude="${BACKUP_PATH}" -cjf ${BACKUP_PATH}/%i-"$(/bin/date +%%y-%%m-%%d-%%H.%%M)".tar.bz2 $(/bin/pwd)'
 
 # turn world saving back on
-ExecStopPost=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo save-on > /srv/minecraft/%i/systemd.stdin; fi"
-ExecStopPost=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo save-all > /srv/minecraft/%i/systemd.stdin; fi"
-ExecStopPost=/bin/sh -c "if [ -p /srv/minecraft/%i/systemd.stdin ]; then /bin/echo 'say backup complete' > /srv/minecraft/%i/systemd.stdin; fi"
-
-[Install]
-WantedBy=multi-user.target
+ExecStopPost=/bin/sh -c "if [ -p /run/minecraft/%i.stdin ]; then /bin/echo save-on > /run/minecraft/%i.stdin; fi"
+ExecStopPost=/bin/sh -c "if [ -p /run/minecraft/%istdin ]; then /bin/echo save-all > /run/minecraft/%i.stdin; fi"
+ExecStopPost=/bin/sh -c "if [ -p /run/minecraft/%i.stdin ]; then /bin/echo 'say backup complete' > /run/minecraft/%i.stdin; fi"
